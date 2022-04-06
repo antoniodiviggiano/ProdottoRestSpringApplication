@@ -27,6 +27,7 @@ public class PrimoInserimento {
             prodotti.add(p2);
             prodotti.add(p3);
             repository.saveAll(prodotti);
+
         };
     }
 
