@@ -1,0 +1,16 @@
+version: "3"
+services:
+  prodotto:
+   image: prodotto:latest
+   build:
+     context: .
+     dockerfile: Dockerfile
+   container_name: prodotto
+   restart: always
+   ports:
+     - 8080:8080
+   networks:
+    - prodotto
+networks:
+  prodotto:
+    external: true
