@@ -13,7 +13,7 @@ public class ProdottoRestSpringApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProdottoRestSpringApplication.class, args);
-		logger.debug("prova console");
+
 	}
 
 }
