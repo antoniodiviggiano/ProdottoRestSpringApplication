@@ -5,8 +5,10 @@ import it.devlecce.ProdottoRestSpring.model.Prodotto;
 import it.devlecce.ProdottoRestSpring.repository.ProdottoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -24,15 +26,33 @@ public class ProdottoController {
         return repository.findAll();
     }
 
-    //trova il prodottto tramite l'id
+    //trova il prodotto tramite l'id
     @GetMapping("/prodotto/{id}")
     public Prodotto trovaProdottoConId(@PathVariable Long id){
         return repository.findById(id).orElseThrow(
                 () -> new ProdottoNonTrovato(id));
     }
+    //modifica prodotto
+    @PutMapping("/prodotto/{id}")
+    public Prodotto aggiornaDatiProdotto(@PathVariable Long id, @RequestBody Prodotto prodotto) {
+        return  repository.findById(id)
+                .map(
+                        nuovoProdotto -> {
+                            nuovoProdotto.setNome(prodotto.getNome());
+                            nuovoProdotto.setPrezzo(prodotto.getPrezzo());
+                            return repository.save(nuovoProdotto);
+                        }
+                )
+                .orElseGet(() -> {
+                            //il prodotto esiste
+                             prodotto.setId(id);
+                            return repository.save(prodotto);
+                        }
+                );
+    }
 
     //inserimento prodotto
-    @PostMapping("/prodotto")
+    @PostMapping("/inserisciprodotto")
     public Prodotto inserisciUnNuovoProdotto(@RequestBody Prodotto nuovoProdotto){
         return repository.save(nuovoProdotto);
     }
@@ -43,4 +63,20 @@ public class ProdottoController {
         repository.deleteById(id);
     }
 
+    //query prodotto x nome
+    @GetMapping("/prodotto/ricerca/nome/{nome}")
+    List<Prodotto> cercaPerNome(@PathVariable String nome) {
+        return repository.findByNome(nome);
+    }
+
+    //query prodotto x data
+    @GetMapping("/prodotto/ricerca/datadiacquisto")
+    public List<Prodotto> ricercaUtenteConDataDiAcquisto(
+            @RequestParam(name = "datada") @DateTimeFormat(pattern = "dd-MM-yyyy")
+                    Date datada,
+            @RequestParam(name = "dataa") @DateTimeFormat(pattern = "dd-MM-yyyy")
+                    Date dataa
+    ){
+        return repository.findByDatadiacquistoBetween(datada, dataa);
+    }
 }
