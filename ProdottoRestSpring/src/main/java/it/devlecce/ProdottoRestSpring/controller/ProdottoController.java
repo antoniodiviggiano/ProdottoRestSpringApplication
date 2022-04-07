@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -78,5 +79,15 @@ public class ProdottoController {
                     Date dataa
     ){
         return repository.findByDatadiacquistoBetween(datada, dataa);
+    }
+
+    //Caricamento di file
+    @PostMapping("/caricafile")
+    public String caricaFile (@RequestParam("file") MultipartFile file){
+        String infofile = file.getOriginalFilename() + " - " + file.getContentType();
+        String conFormat = String.format("%s-%s", file.getOriginalFilename(), file.getContentType());
+        logger.info(infofile);
+        logger.warn(conFormat);
+        return conFormat;
     }
 }
